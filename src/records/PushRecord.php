@@ -351,6 +351,7 @@ class PushRecord extends ActiveRecord
         foreach ($data as $property => $value) {
             $config[$property] = $this->unserializeData($value);
         }
-        return Yii::createObject($config);
+        return $config;
+        // return Yii::createObject($config);
     }
 }
