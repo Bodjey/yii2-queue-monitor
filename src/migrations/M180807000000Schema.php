@@ -32,6 +32,7 @@ class M180807000000Schema extends Migration
             'delay' => $this->integer()->unsigned()->notNull(),
             'trace' => $this->text(),
             'context' => $this->text(),
+            'progress' => $this->double()->unsigned()->defaultValue(0),
             'pushed_at' => $this->integer()->unsigned()->notNull(),
             'stopped_at' => $this->integer()->unsigned(),
             'first_exec_id' => $this->bigInteger(),

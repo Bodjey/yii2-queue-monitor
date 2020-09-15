@@ -63,6 +63,9 @@ class JobMonitor extends Behavior
      */
     protected static $startedPush;
 
+    protected $senderName;
+    protected $jobUid;
+
     /**
      * @param Env $env
      * @param array $config
@@ -119,6 +122,9 @@ class JobMonitor extends Behavior
      */
     public function beforeExec(ExecEvent $event)
     {
+        $this->senderName = $this->getSenderName($event);
+        $this->jobUid = $event->id;
+
         if (!$this->isActive($event->job)) {
             return;
         }
@@ -131,6 +137,7 @@ class JobMonitor extends Behavior
             $event->handled = true;
             return;
         }
+
         $this->env->db->transaction(function () use ($event, $push) {
             $worker = $this->getWorkerRecord($event);
 
@@ -290,5 +297,20 @@ class JobMonitor extends Behavior
             }
         }
         return false;
+    }
+
+    public function setProgress($percent)
+    {
+        $push = PushRecord::find()
+            ->byJob($this->senderName, $this->jobUid)
+            ->one();
+        if (!$push) {
+            return;
+        }
+        $push->progress += round($percent, 2);
+        if ($push->progress > 100) {
+            $push->progress = 100;
+        }
+        $push->save(false);
     }
 }
