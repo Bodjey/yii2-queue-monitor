@@ -307,7 +307,7 @@ class JobMonitor extends Behavior
         if (!$push) {
             return;
         }
-        $push->progress += round($percent, 2);
+        $push->progress += $percent;
         if ($push->progress > 100) {
             $push->progress = 100;
         }
